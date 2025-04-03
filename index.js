@@ -11,19 +11,97 @@ app.use(express.json());
 
 
 // * Please DO NOT INCLUDE the private app access token in your repo. Don't do this practicum in your normal account.
-const PRIVATE_APP_ACCESS = '';
+const PRIVATE_APP_ACCESS = process.env.ACCESS_TOKEN;
+const BOOK_OBJECT_TYPE_ID = "2-141097831";
 
 // TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
 
 // * Code for Route 1 goes here
 
+app.get("/", async (req, res) => {
+  try {
+    // Fetch your CRM records here
+    // This is a placeholder - replace with your actual API call
+    const response = await axios.get(
+      `https://api.hubapi.com/crm/v3/objects/${BOOK_OBJECT_TYPE_ID}?properties=name,year,genre`,
+      {
+        headers: {
+          authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+          "content-type": "application/json"
+        }
+      }
+    );
+
+    const records = response.data.results;
+
+    res.render('homepage', {
+      title: 'CRM Records',
+      records: records.map(r => ({
+        properties: {
+          name: r.properties.name,
+          year: r.properties.year,
+          genre: r.properties.genre
+        }
+      }))
+    });
+  } catch (error) {
+    console.error('Error fetching records:', error);
+    res.render('homepage', {
+      title: 'CRM Records',
+      records: [],
+      error: 'Failed to fetch records'
+    });
+  }
+  return
+})
+
+
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
 
 // * Code for Route 2 goes here
 
+app.get("/update-cobj", async (req, res) => {
+  res.render('updates.pug', {
+    title: "Update Custom Object Form | Integrating With HubSpot I Practicum"
+  })
+
+})
+
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
 
 // * Code for Route 3 goes here
+
+app.post("/update-cobj", async (req, res) => {
+
+  const { name, year, genre } = req.body
+
+  try {
+    await axios.post(
+      `https://api.hubapi.com/crm/v3/objects/${BOOK_OBJECT_TYPE_ID}`,
+      {
+        associations: [],
+        properties: {
+          name,
+          year,
+          genre
+        }
+      },
+      {
+        headers: {
+          authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+          "content-type": "application/json"
+        }
+      }
+    )
+  } catch (e) {
+    console.error(e)
+    res.status(500).send("Failure in POST /update-cobj")
+  }
+
+  res.redirect("/")
+  return
+
+})
 
 /** 
 * * This is sample code to give you a reference for how you should structure your calls. 

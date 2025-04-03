@@ -11,7 +11,8 @@ app.use(express.json());
 
 
 // * Please DO NOT INCLUDE the private app access token in your repo. Don't do this practicum in your normal account.
-const PRIVATE_APP_ACCESS = '';
+const PRIVATE_APP_ACCESS = process.env.ACCESS_TOKEN;
+const BOOK_OBJECT_TYPE_ID = "2-141097831";
 
 // TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
 
@@ -39,6 +40,34 @@ app.get("/update-cobj", async (req, res) => {
 // * Code for Route 3 goes here
 
 app.post("/update-cobj", async (req, res) => {
+
+  const { name, year, genre } = req.body
+
+  console.log(PRIVATE_APP_ACCESS)
+  try {
+    await axios.post(
+      `https://api.hubapi.com/crm/v3/objects/${BOOK_OBJECT_TYPE_ID}`,
+      {
+        associations: [],
+        properties: {
+          name,
+          year,
+          genre
+        }
+      },
+      {
+        headers: {
+          authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+          "content-type": "application/json"
+        }
+      }
+    )
+  } catch (e) {
+    console.error(e)
+    res.status(500).send("Failure in POST /update-cobj")
+  }
+
+  res.status(200).send("Successfully created book!")
   return
 
 })

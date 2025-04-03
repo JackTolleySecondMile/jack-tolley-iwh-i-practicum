@@ -31,4 +31,4 @@ ___
 # Test account link to custom objects
 https://app-eu1.hubspot.com/contacts/145437796/objects/2-141097831/views/all/list
 
-*Note this is on my main developer account with email JackRTolley@gmail.com
+*Note this test account is on my main developer account with email JackRTolley@gmail.com, happy to give access if needed.

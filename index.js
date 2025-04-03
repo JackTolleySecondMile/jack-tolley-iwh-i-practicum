@@ -18,6 +18,7 @@ const PRIVATE_APP_ACCESS = '';
 // * Code for Route 1 goes here
 
 app.get("/", async (req, res) => {
+  return
 
 })
 
@@ -27,6 +28,9 @@ app.get("/", async (req, res) => {
 // * Code for Route 2 goes here
 
 app.get("/update-cobj", async (req, res) => {
+  res.render('updates.pug', {
+    title: "Update Custom Object Form | Integrating With HubSpot I Practicum"
+  })
 
 })
 
@@ -35,6 +39,7 @@ app.get("/update-cobj", async (req, res) => {
 // * Code for Route 3 goes here
 
 app.post("/update-cobj", async (req, res) => {
+  return
 
 })
 
